@@ -1,0 +1,86 @@
+"use client";
+
+import React, { useState } from 'react';
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/Card";
+import { Input } from "@/components/ui/Input";
+import { Button } from "@/components/ui/Button";
+import { CalculatorChart } from "@/components/CalculatorChart";
+
+export default function DividendCalculator() {
+  const [dividendPerShare, setDividendPerShare] = useState(15);
+  const [numberOfShares, setNumberOfShares] = useState(500);
+  
+  const [result, setResult] = useState<{totalDividend: number} | null>(null);
+  const [loading, setLoading] = useState(false);
+
+  const calculate = async () => {
+    setLoading(true);
+    try {
+      const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
+      const res = await fetch(`${apiUrl}/api/calculators/dividend`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ dividendPerShare, numberOfShares })
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error);
+      setResult(data);
+    } catch (err) {
+      console.error(err);
+      alert('Failed to calculate. Ensure backend is running.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="container mx-auto px-4 py-8 md:px-8 max-w-5xl">
+      <h1 className="text-3xl font-bold mb-8">Dividend Calculator</h1>
+      
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <Card>
+          <CardHeader>
+            <CardTitle>Dividend Details</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-6">
+            <Input 
+              label="Dividend per Share (₹)" 
+              type="number" 
+              value={dividendPerShare} 
+              onChange={e => setDividendPerShare(Number(e.target.value))} 
+            />
+            <Input 
+              label="Number of Shares" 
+              type="number" 
+              value={numberOfShares} 
+              onChange={e => setNumberOfShares(Number(e.target.value))} 
+            />
+            <Button className="w-full" onClick={calculate} disabled={loading}>
+              {loading ? 'Calculating...' : 'Calculate'}
+            </Button>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>Result</CardTitle>
+          </CardHeader>
+          <CardContent>
+            {result ? (
+              <div className="animate-in fade-in duration-500 h-full flex flex-col justify-center py-12">
+                <div className="text-center">
+                  <span className="block text-muted-foreground mb-4">Total Dividend Income</span>
+                  <span className="font-bold text-5xl text-brand-500">₹ {result.totalDividend.toLocaleString('en-IN')}</span>
+                </div>
+              </div>
+            ) : (
+              <div className="h-full flex items-center justify-center min-h-[300px] text-muted-foreground text-sm">
+                Enter details and calculate to see results.
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      </div>
+    </div>
+  );
+}
