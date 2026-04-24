@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useRef } from 'react'; // Added useRef
+import React, { useState, useRef, useEffect } from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/Card";
 import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
@@ -20,16 +20,18 @@ export default function SipCalculator() {
   const [stockResult, setStockResult] = useState<CalculationResult | null>(null);
   const [loading, setLoading] = useState(false);
 
-  // Reference for the input field
   const nameInputRef = useRef<HTMLInputElement>(null);
 
   const FD_RATE = 6.5;
   const STOCK_RATE = 12;
 
+  useEffect(() => {
+    calculateResults();
+  }, []);
+
   const scrollToRegister = () => {
     const element = document.getElementById('registration-section');
     element?.scrollIntoView({ behavior: 'smooth' });
-    // Focus the input field after a slight delay to allow smooth scroll to finish
     setTimeout(() => {
       nameInputRef.current?.focus();
     }, 800);
@@ -37,9 +39,6 @@ export default function SipCalculator() {
 
   const calculateResults = async () => {
     setLoading(true);
-    setFdResult(null);
-    setStockResult(null);
-
     try {
       const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
 
@@ -59,11 +58,10 @@ export default function SipCalculator() {
         setFdResult(fdData);
         setStockResult(stockData);
         setLoading(false);
-      }, 2000);
+      }, 1500);
 
     } catch (err) {
       console.error(err);
-      alert('Failed to calculate. Ensure backend is running.');
       setLoading(false);
     }
   };
@@ -117,14 +115,19 @@ export default function SipCalculator() {
                 </div>
               </div>
 
-              <Button className="w-full bg-zinc-900 hover:bg-black text-white" onClick={calculateResults} disabled={loading}>
+              {/* UPDATED: Default Green Color */}
+              <Button
+                className="w-full bg-green-600 hover:bg-green-700 text-white font-bold"
+                onClick={calculateResults}
+                disabled={loading}
+              >
                 {loading ? 'Processing Analysis...' : 'Compare Performance'}
               </Button>
             </CardContent>
           </Card>
 
           <div className="lg:col-span-2 space-y-6">
-            {loading ? (
+            {loading && !stockResult ? (
               <Card className="h-full min-h-[500px] flex flex-col items-center justify-center space-y-4 border-dashed animate-pulse">
                 <Loader2 className="w-12 h-12 text-zinc-300 animate-spin" />
                 <div className="text-center">
@@ -202,21 +205,12 @@ export default function SipCalculator() {
                   </div>
                 </div>
               </div>
-            ) : (
-              <Card className="h-full min-h-[400px] flex items-center justify-center border-dashed">
-                <div className="text-center">
-                  <div className="bg-zinc-100 p-4 rounded-full inline-block mb-4">
-                    <TrendingUp className="text-zinc-400" />
-                  </div>
-                  <p className="text-muted-foreground font-medium">Click calculate to see the impact of compounding.</p>
-                </div>
-              </Card>
-            )}
+            ) : null}
           </div>
         </div>
       </section>
 
-      {/* --- SECTION 2: COMPACT HIGHLIGHTED STRIP --- */}
+      {/* --- SECTION 2: STRIP --- */}
       <section className="bg-zinc-900 rounded-3xl p-6 md:px-10 md:py-8 max-w-5xl mx-auto shadow-2xl">
         <div className="flex flex-col md:flex-row items-center justify-between gap-8">
           <div className="space-y-2 text-center md:text-left">
@@ -243,7 +237,6 @@ export default function SipCalculator() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
 
           <div className="relative bg-zinc-900 p-8 rounded-[2.5rem] lg:sticky lg:top-8">
-
             <div className="flex flex-wrap items-center justify-center lg:justify-start gap-3 mb-6">
               <div className="bg-zinc-800 text-white px-4 py-2 rounded-lg flex items-center gap-2 shadow-xl border border-white/10">
                 <Calendar size={16} className="text-blue-400" />
@@ -256,11 +249,7 @@ export default function SipCalculator() {
             </div>
 
             <div className="rounded-3xl overflow-hidden bg-zinc-800 border border-white/5 relative">
-              <img
-                src="/img.webp"
-                alt="Webinar Host"
-                className="w-full h-auto object-cover opacity-90"
-              />
+              <img src="/img.webp" alt="Webinar Host" className="w-full h-auto object-cover opacity-90" />
             </div>
 
             <h3 className="mt-8 text-2xl font-serif text-white italic text-center lg:text-left leading-relaxed">
@@ -282,7 +271,7 @@ export default function SipCalculator() {
                 <div className="relative group">
                   <User className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-400" size={18} />
                   <input
-                    ref={nameInputRef} // Attached the Ref here
+                    ref={nameInputRef}
                     type="text"
                     placeholder="Enter your full name"
                     className="w-full pl-12 pr-4 py-4 rounded-xl bg-zinc-50 border border-zinc-200 focus:bg-white focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 outline-none transition-all"
