@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef } from 'react'; // Removed useEffect from imports
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/Card";
 import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
@@ -25,9 +25,7 @@ export default function SipCalculator() {
   const FD_RATE = 6.5;
   const STOCK_RATE = 12;
 
-  useEffect(() => {
-    calculateResults();
-  }, []);
+  // Removed the useEffect hook that called calculateResults() on mount
 
   const scrollToRegister = () => {
     const element = document.getElementById('registration-section');
@@ -115,13 +113,13 @@ export default function SipCalculator() {
                 </div>
               </div>
 
-              {/* UPDATED: Default Green Color */}
+              {/* UPDATED: Text changed to "Calculate SIP" */}
               <Button
                 className="w-full bg-green-600 hover:bg-green-700 text-white font-bold"
                 onClick={calculateResults}
                 disabled={loading}
               >
-                {loading ? 'Processing Analysis...' : 'Compare Performance'}
+                {loading ? 'Processing Analysis...' : 'Calculate SIP'}
               </Button>
             </CardContent>
           </Card>
@@ -205,7 +203,16 @@ export default function SipCalculator() {
                   </div>
                 </div>
               </div>
-            ) : null}
+            ) : (
+              <Card className="h-full min-h-[400px] flex items-center justify-center border-dashed">
+                <div className="text-center">
+                  <div className="bg-zinc-100 p-4 rounded-full inline-block mb-4">
+                    <TrendingUp className="text-zinc-400" />
+                  </div>
+                  <p className="text-muted-foreground font-medium">Enter details and click Calculate to see the comparison.</p>
+                </div>
+              </Card>
+            )}
           </div>
         </div>
       </section>
