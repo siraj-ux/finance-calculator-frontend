@@ -36,8 +36,6 @@ export default function SipCalculator() {
   const calculateResults = () => {
     setLoading(true);
     
-    // SIP Formula: FV = P × ({[1 + r]^n - 1} / r) × (1 + r)
-    // P = Monthly investment, r = monthly return rate, n = number of months
     const performMath = (rate: number) => {
       const monthlyRate = rate / 100 / 12;
       const months = timePeriodYears * 12;
@@ -52,7 +50,6 @@ export default function SipCalculator() {
       };
     };
 
-    // Simulate a brief loading state for UX
     setTimeout(() => {
       setFdResult(performMath(FD_RATE));
       setStockResult(performMath(STOCK_RATE));
@@ -66,18 +63,18 @@ export default function SipCalculator() {
     <div className="w-full">
 
       {/* --- 1ST SECTION: HEADLINE & SUB-HEADLINE --- */}
-      <section className="bg-zinc-950 py-8 px-6 text-center border-b border-white/5">
+      <section className="bg-zinc-950 py-12 px-6 text-center border-b border-white/5">
         <div className="max-w-4xl mx-auto">
-          <p className="text-[#C0944A] font-bold tracking-[0.2em] text-[10px] md:text-xs mb-3 uppercase">
-            2-Day Masterclass
+          <p className="text-green-500 font-bold tracking-[0.3em] text-[10px] md:text-xs mb-4 uppercase">
+            Limited 2-Day Masterclass
           </p>
-          <h1 className="text-2xl md:text-4xl font-serif text-white leading-snug mb-4 font-medium">
-            Build Your Personal <span className="text-[#C0944A]">Financial Roadmap</span>
+          <h1 className="text-3xl md:text-5xl font-serif text-white leading-tight mb-6 font-medium">
+            Build Your Personal <span className="bg-gradient-to-r from-green-400 to-emerald-500 bg-clip-text text-transparent font-bold">Financial Roadmap</span>
           </h1>
-          <div className="text-zinc-400 text-sm md:text-base font-light">
-            <p>A step-by-step masterclass on wealth planning. Learn how to make your savings work smarter.</p>
+          <div className="text-zinc-400 text-sm md:text-lg font-light max-w-2xl mx-auto leading-relaxed">
+            <p>A step-by-step masterclass on wealth planning. Learn how to make your savings work smarter and accelerate your growth.</p>
           </div>
-          <p className="text-zinc-600 text-[9px] mt-4 italic opacity-80">
+          <p className="text-zinc-600 text-[10px] mt-6 italic opacity-80">
             *Educational content only. Not financial or investment advice.
           </p>
         </div>
